@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scotland Yard - Mr. X's Moves</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="container mt-4">
+
+    <h1 class="text-center mb-4">Scotland Yard - Mr. X's Moves</h1>
+
+    <!-- Move Input Section -->
+    <div class="card p-3 mb-3">
+        <h5>Add Move</h5>
+        <div class="mb-2">
+            <label for="moveType" class="form-label">Move Type:</label>
+            <select id="moveType" class="form-select">
+                <option value="taxi">🚕 Taxi</option>
+                <option value="bus">🚌 Bus</option>
+                <option value="underground">🚆 Underground</option>
+                <option value="black">⬛ Black Ticket</option>
+                <option value="2x">2x Move</option>
+                <option value="other">📍 Other</option>
+            </select>
+        </div>
+        <div class="mb-2">
+            <label for="position" class="form-label">Current Position:</label>
+            <input type="number" id="position" class="form-control" placeholder="Enter Position">
+        </div>
+        <button onclick="storeMove()" class="btn btn-primary">Store Move</button>
+    </div>
+
+    <!-- Password Input Section -->
+    <div class="card p-3 mb-3">
+        <h5>Reveal Positions</h5>
+        <div class="mb-2">
+            <label for="password" class="form-label">Enter Password:</label>
+            <input type="password" id="password" class="form-control" placeholder="Password">
+        </div>
+        <button onclick="togglePositions()" class="btn btn-success">Show/Hide Positions</button>
+    </div>
+
+    <!-- Move Table -->
+    <h2 class="text-center">Stored Moves</h2>
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Move Type</th>
+                    <th>Position</th>
+                </tr>
+            </thead>
+            <tbody id="movesTableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Buttons for Actions -->
+    <div class="d-flex justify-content-between">
+        <button onclick="deleteLastMove()" class="btn btn-warning">Delete Last Move</button>
+        <button onclick="clearMoves()" class="btn btn-danger">Clear All Moves</button>
+    </div>
+
+    <script>
+        let moves = JSON.parse(localStorage.getItem("moves")) || [];
+        let correctPassword = "secret"; // Set your password here
+        let isVisible = false;
+
+        function getMoveEmoji(moveType) {
+            const emojiMap = {
+                "taxi": "🚕 (Taxi)",
+                "bus": "🚌 (Bus)",
+                "underground": "🚆 (Underground)",
+                "black": "⬛ (Hidden Transport)",
+                "2x": "2x",
+                "other": "📍"
+            };
+            return emojiMap[moveType] || moveType;
+        }
+
+        function storeMove() {
+            const moveType = document.getElementById("moveType").value;
+            const position = document.getElementById("position").value.trim();
+
+            if (!position) {
+                alert("Please enter a position");
+                return;
+            }
+
+            const move = {
+                type: moveType,
+                position: position
+            };
+
+            moves.push(move);
+            localStorage.setItem("moves", JSON.stringify(moves));
+            displayMoves();
+        }
+
+        function displayMoves() {
+            const movesTableBody = document.getElementById("movesTableBody");
+            movesTableBody.innerHTML = "";
+
+            moves.forEach((move, index) => {
+                const moveNumber = index + 1;
+                const row = document.createElement("tr");
+
+                let isAlwaysVisible = [3, 8, 13, 18].includes(moveNumber);
+                let positionClass = isAlwaysVisible ? "" : "hidden";
+
+                row.innerHTML = `
+                    <td>${moveNumber}</td>
+                    <td>${getMoveEmoji(move.type)}</td>
+                    <td class="position-cell ${positionClass}">${move.position}</td>
+                `;
+
+                movesTableBody.appendChild(row);
+            });
+        }
+
+        function togglePositions() {
+            const password = document.getElementById("password").value;
+
+            if (password === correctPassword) {
+                isVisible = !isVisible;
+                document.querySelectorAll(".position-cell.hidden").forEach(cell => {
+                    cell.style.display = isVisible ? "table-cell" : "none";
+                });
+            } else {
+                alert("Incorrect Password!");
+            }
+        }
+
+        function deleteLastMove() {
+            if (moves.length === 0) {
+                alert("No moves to delete!");
+                return;
+            }
+
+            if (confirm("Are you sure you want to delete the last move?")) {
+                moves.pop();
+                localStorage.setItem("moves", JSON.stringify(moves));
+                displayMoves();
+            }
+        }
+
+        function clearMoves() {
+            if (moves.length === 0) {
+                alert("No moves to clear!");
+                return;
+            }
+
+            if (confirm("Are you sure you want to clear all moves?")) {
+                localStorage.removeItem("moves");
+                moves = [];
+                displayMoves();
+            }
+        }
+
+        displayMoves();
+    </script>
+
+</body>
+</html>

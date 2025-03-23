@@ -39,16 +39,6 @@
         <button onclick="storeMove()" class="btn btn-primary">Store Move</button>
     </div>
 
-    <!-- Password Input Section -->
-    <div class="card p-3 mb-3">
-        <h5>Reveal Positions</h5>
-        <div class="mb-2">
-            <label for="password" class="form-label">Enter Password:</label>
-            <input type="password" id="password" class="form-control" placeholder="Password">
-        </div>
-        <button onclick="togglePositions()" class="btn btn-success">Show/Hide Positions</button>
-    </div>
-
     <!-- Move Table -->
     <h2 class="text-center">Stored Moves</h2>
     <div class="table-responsive">
@@ -68,6 +58,16 @@
     <div class="d-flex justify-content-between">
         <button onclick="deleteLastMove()" class="btn btn-warning">Delete Last Move</button>
         <button onclick="clearMoves()" class="btn btn-danger">Clear All Moves</button>
+    </div>
+
+    <!-- Password Input Section -->
+    <div class="card p-3 mt-3">
+        <h5>Reveal Positions</h5>
+        <div class="mb-2">
+            <label for="password" class="form-label">Enter Password:</label>
+            <input type="password" id="password" class="form-control" placeholder="Password">
+        </div>
+        <button onclick="togglePositions()" class="btn btn-success">Show/Hide Positions</button>
     </div>
 
     <script>
